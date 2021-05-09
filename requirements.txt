@@ -1,0 +1,1 @@
+#requirements.txt wird von pip verwendet, um externe Pakete zu installieren. Hier können wir also alle unsere Abhängigkeiten in der richtigen Version deklarieren, damit wir immer alle Skripte laufen lassen können. Mehr dazu hier: https://pip.pypa.io/en/stable/user_guide/#requirements-files
