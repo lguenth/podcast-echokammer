@@ -43,4 +43,4 @@ corpus = [result.full_text for result in search_results if result not in corpus]
 since_date = "2021-01-01" # String im Format YYYY-MM-DD
 until_date = datetime.strptime("2021-01-06", "%Y-%m-%d")
 
-search_results = tweepy.Cursor(api.search, q=query, tweet_mode="extended", lang="de", since=since_date, until=until_date).items(100)
+search_results = tweepy.Cursor(api.search, q=query, tweet_mode="extended", lang="de", since=since_date, until=until_date).items()
