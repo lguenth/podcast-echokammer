@@ -1,0 +1,95 @@
+#+TITLE: Tweepy Testskript
+
+* Modulimport
+- Mithilfe von Tweepy haben wir Zugriff auf die Twitter API. Die Dokumentation von Tweepy findet sich hier: https://docs.tweepy.org
+- "credentials.py" ist eine Datei, die auf der selben Verzeichnisebene liegt wie dieses Skript. Darin befinden sich unsere API-Schlüssel sowie unsere User-Tokens für @pandemie_echo. Damit kann uns Twitter eindeutig identifizieren. Diese Secrets dürfen NIRGENDWO im Code auftauchen. "credentials.py" ist daher Teil unseres ".gitignore" und wird nicht indiziert.
+- Pandas ist eine Bibliothek zur einfachen Verwaltung von größeren tabellarischen Datenmengen.
+
+#+begin_src python
+import tweepy
+from credentials import consumer_key, consumer_secret, access_token, access_token_secret
+import pandas
+#+end_src
+
+* Authentifizierung
+- Zunächst müssen wir uns also ausweisen. Erst dann haben wir Zugriff auf die API.
+
+#+begin_src python
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_token_secret)
+
+api = tweepy.API(auth)
+#+end_src
+
+* Anwendungsbeispiele
+** Timeline auslesen
+#+begin_src python
+public_tweets = api.home_timeline()
+for tweet in public_tweets:
+    print(tweet.text)
+#+end_src
+
+** Trends nach Region
+- /API.trends_place(id[, exclude])/
+  + id – Yahoo! Where on Earth ID (z.B. 1 = weltweit, 23424829 = Deutschland), WOEID Lookup: https://www.findmecity.com/
+  + exclude – ungewollte Hashtags
+#+begin_src python
+trends_at_place = api.trends_place(23424829)
+
+for values in trends_at_place:
+    for trend in values["trends"]:
+        print(trend)
+#+end_src
+
+** Informationen zu einem bestimmten User
+- /API.get.user(name)/
+#+begin_src python
+user = api.get_user("pandemie_echo")
+print(f"@-Name: {user.screen_name}")
+print(f"Anzeigename: {user.name}")
+print(f"Zahl der Follower: {user.followers_count}")
+for friend in user.friends():
+   print(friend.screen_name) # Liste der gefolgten Personen ("Friends")
+#+end_src
+
+* Suche
+** User
+** Tweets
+- /API.search(q[, geocode, lang, result_type, count, until, since])/
+  + q – query String
+  + Hinweis: "Please note that Twitter’s search service and, by extension, the Search API is not meant to be an exhaustive source of Tweets. Not all Tweets will be indexed or made available via the search interface."
+  + Hinweis 2: "Keep in mind that the search index has a 7-day limit. In other words, no tweets will be found for a date older than one week."
+
+    *Und damit ist es für uns komplett nutzlos...*
+#+begin_src python
+query = "Drosten"  # kann auch Liste sein
+
+# Einfache Suche:
+search_results = api.search(q=query, lang="de", tweet_mode="extended", count="10")
+for result in search_results:
+    print(result.full_text)
+
+# Komplexe Suche:
+search_results = tweepy.Cursor(
+    api.search,
+    q=query,
+    tweet_mode="extended",
+    lang="de").items(10)
+
+for result in search_results:
+    print(result.full_text)
+
+# Ausgabe ist in diesem Fall identisch.
+
+# List comprehension mit Duplicate-Filter:
+corpus = []
+corpus = [result.full_text for result in search_results if result not in corpus]
+
+# Zeitliche Einschränkung:
+since_date = "2021-01-01" # String im Format YYYY-MM-DD
+until_date = datetime.strptime("2021-01-06", "%Y-%m-%d") # Datetime-Objekt
+
+search_results = tweepy.Cursor(api.search, q=query, tweet_mode="extended", lang="de", since=since_date, until=until_date).items()
+# Leer... Schade.
+
+#+end_src
