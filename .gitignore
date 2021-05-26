@@ -1,1 +1,3 @@
-tweepy/credentials.py
+tools/tweepy/credentials.py
+tools/echo-scraper/geckodriver.log
+.git
