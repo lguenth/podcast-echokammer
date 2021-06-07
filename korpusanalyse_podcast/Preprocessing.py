@@ -3,12 +3,16 @@ from lxml import etree
 import nltk 
 import pickle
 from HanTa import HanoverTagger as ht
+from nltk.corpus import stopwords
+
 
 tagger = ht.HanoverTagger('morphmodel_ger.pgz')
 parser = etree.XMLParser(remove_blank_text=True)
 input_path = 'skripte'
 output_path = 'corpus'
 output_path_string = 'corpus_strings'
+german_stop_words = stopwords.words('german')
+
 
 for file in os.listdir(input_path):
     try:
@@ -17,9 +21,14 @@ for file in os.listdir(input_path):
         with open("errors.txt", "a") as file_object:
             file_object.write("%s \n" %file)
     text=""
+    folge=""
     for element in list(data.iter()):
         if element.tag  == "text":
             text+=element.text
+        if element.tag == "folge":
+            folge=element.text
+
+
 
     tokens = nltk.word_tokenize(text, language='german')
 
@@ -31,7 +40,7 @@ for file in os.listdir(input_path):
     new_lemma = []
 
     for lemma in lemmata:
-        if lemma[1] == "--":
+        if lemma[1] == "--" or lemma[1] in german_stop_words:
             continue
         new_lemma.append(lemma[1])
     
@@ -44,7 +53,7 @@ for file in os.listdir(input_path):
     # with open('%s/%s.pkl' %(output_path, file.split(".")[0]), 'wb') as f:
     #      pickle.dump(new_lemma, f)
 
-    with open('%s/%s.txt' %(output_path_string, file.split(".")[0]), 'w') as f:
+    with open('%s/%s.txt' %(output_path_string, folge), 'w') as f:
          f.write(lemma_string)
          
 
