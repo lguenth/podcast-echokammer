@@ -25,7 +25,7 @@ for file in os.listdir(input_path):
     for element in list(data.iter()):
         if element.tag  == "text":
             text+=element.text
-        if element.tag == "folge":
+        if element.tag == "datum":
             folge=element.text
 
 
@@ -40,7 +40,7 @@ for file in os.listdir(input_path):
     new_lemma = []
 
     for lemma in lemmata:
-        if lemma[1] == "--" or lemma[1] in german_stop_words:
+        if lemma[1] == "--" or lemma[1] in german_stop_words or lemma[2]!="NN":
             continue
         new_lemma.append(lemma[1])
     

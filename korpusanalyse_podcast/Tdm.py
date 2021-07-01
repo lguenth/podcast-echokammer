@@ -4,12 +4,13 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import pickle
 import os
 
-input_path="corpus_strings"
+input_path="corpus_dlf"
 vectorizer = TfidfVectorizer()
 raw_df = pd.DataFrame(index= [""])
 
 for file in os.listdir(input_path):
     with open('%s/%s' %(input_path, file), 'r') as f:
+        #new_date_format = file.split(".")[2] + "-" + file.split(".")[1] + "-" + file.split(".")[0]
         raw_df[file.split(".")[0]] = f.read()
         
 
@@ -24,4 +25,4 @@ tdm = pd.DataFrame(doc_vec.toarray().transpose(),
 # Change column headers
 tdm.columns = raw_df.columns
 print(tdm)
-tdm.to_csv("results/tdm.csv")
+tdm.to_csv("results/tdm_dlf.csv")
