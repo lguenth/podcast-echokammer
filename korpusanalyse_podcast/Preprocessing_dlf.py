@@ -1,26 +1,21 @@
 import os
-from lxml import etree
 import nltk 
 from HanTa import HanoverTagger as ht
 from nltk.corpus import stopwords
 
 
 tagger = ht.HanoverTagger('morphmodel_ger.pgz')
-parser = etree.XMLParser(remove_blank_text=True)
-input_path = 'coronaticker_2021_05.xml'
+input_path = 'new_texts_dlf'
 output_path = 'corpus_dlf'
 german_stop_words = stopwords.words('german')
 
 
-data = etree.parse("coronaticker_2021_05.xml")
+for file in os.listdir(input_path):
+    with open ("%s/%s" %(input_path, file), 'r') as f:
+        text = f.read()
+        date = file.split(".")[0]
 
-for element in list(data.iter("text")):
-    date = element.get("date")
-    text = ""
-    print(date)
 
-    for p in element.getchildren():
-        text += p.text
 
 
 

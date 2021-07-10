@@ -39,7 +39,7 @@ for url in urls:
     soup = BeautifulSoup(page.content, 'html.parser')
     aufgenommen = False
     if url in h3_urls:
-        ps= soup.find_all(["p", "h3", "h2"])
+        ps= soup.find_all(["p", "h3"])
     else:
         ps = soup.find_all("p")
     text = ""

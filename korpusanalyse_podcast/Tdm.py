@@ -13,7 +13,7 @@ for file in os.listdir(input_path):
         #new_date_format = file.split(".")[2] + "-" + file.split(".")[1] + "-" + file.split(".")[0]
         raw_df[file.split(".")[0]] = f.read()
         
-
+raw_df.to_csv("results/test2.csv")
 
 
 doc_vec = vectorizer.fit_transform(raw_df.iloc[0])
@@ -25,4 +25,4 @@ tdm = pd.DataFrame(doc_vec.toarray().transpose(),
 # Change column headers
 tdm.columns = raw_df.columns
 print(tdm)
-tdm.to_csv("results/tdm_dlf.csv")
+#tdm.to_csv("results/tdm_dlf.csv")
